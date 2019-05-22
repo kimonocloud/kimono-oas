@@ -1,0 +1,906 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.0",
+    "title": "Interop API",
+    "description": "Interop APIs provide access to Kimono Interop Cloud resources and operations"
+  },
+  "host": "localhost:5010",
+  "basePath": "/v2/interop",
+  "schemes": [
+    "http","https"
+  ],
+  "securityDefinitions": { 
+    "BasicAuth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    { "BasicAuth": [ ] }
+  ], 
+  "definitions": {
+    "BaseResourceType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
+    "PagedDataResponseType": {
+      "type": "object",
+      "properties": {
+        "paging": {
+          "type": "object",
+          "properties": {
+            "next": {
+              "type": "string"
+            },
+            "last": {
+              "type": "string"
+            },
+            "first": {
+              "type": "string"
+            },
+            "prev": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "readOnly": true
+        },
+        "message": {
+          "type": "string",
+          "readOnly": true
+        },
+        "ext_message": {
+          "type": "string",
+          "readOnly": true
+        },
+        "details": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "TopicId": {
+      "type": "string"
+    },
+    "AccountRefType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "public_id": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "userdata": {
+          "type": "string"
+        }
+      }
+    },
+    "CloudRefType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "env": {
+          "$ref": "#/definitions/CloudEnvRefType"
+        }
+      }
+    },
+    "CloudEnvRefType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "IngestionType": {
+      "type": "string",
+      "enum": [
+        "unspecified",
+        "collection",
+        "bulk_load_immediate",
+        "bulk_load_progressive",
+        "event_bundle",
+        "bulk_attr_change",
+        "mirror"
+      ]
+    },
+    "IngestionState": {
+      "type": "string",
+      "enum": [
+        "unspecified",
+        "preparing",
+        "scheduled",
+        "executing",
+        "success",
+        "failed",
+        "cancelled",
+        "timeout"
+      ]
+    },
+    "ReleaseState": {
+      "type": "string",
+      "enum": [
+        "unspecified",
+        "development",
+        "beta",
+        "released",
+        "deprecated"
+      ]
+    },
+    "IntegrationRefType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "AuthType": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "client_id": {
+          "type": "string"
+        },
+        "client_secret": {
+          "type": "string",
+          "format": "password"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "IntegrationStatusType": {
+      "type": "object",
+      "properties": {
+        "op_state": {
+          "type": "string"
+        },
+        "setup_state": {
+          "type": "string"
+        },
+        "last_sync_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "TenantInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "account": {
+          "$ref": "#/definitions/AccountRefType"
+        },
+        "cloud": {
+          "$ref": "#/definitions/CloudRefType"
+        },
+        "integration": {
+          "$ref": "#/definitions/IntegrationRefType"
+        },
+        "license": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "valid_from": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "valid_to": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "status": {
+          "$ref": "#/definitions/IntegrationStatusType"
+        },
+        "sis_status": {
+          "$ref": "#/definitions/IntegrationStatusType"
+        },
+        "auth": {
+          "$ref": "#/definitions/AuthType"
+        }
+      }
+    },
+    "Actor": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResourceType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "Cloud": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResourceType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "Ingestion": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResourceType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "actor_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "connector_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "session_token": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/definitions/IngestionType"
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TopicId"
+              }
+            },
+            "state": {
+              "$ref": "#/definitions/IngestionState"
+            }
+          }
+        }
+      ]
+    },
+    "Integration": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResourceType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "IntegrationsResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Integration"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },
+    "IntegrationVersion": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResourceType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "release_state": {
+              "$ref": "#/definitions/ReleaseState"
+            }
+          }
+        }
+      ]
+    },
+    "IntegrationVersionsResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/IntegrationVersion"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    }
+  },
+  "paths": {
+    "/actors": {
+      "get": {
+        "tags": [
+          "Actors"
+        ],
+        "operationId": "listActors",
+        "summary": "List Actors",
+        "description": "Get a list of actors installed in Interop Clouds for accounts visible to you. This API is used to obtain coordinates and credentials essential for interacting with Integrations and other actors.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Actor response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Actor"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clouds": {
+      "get": {
+        "tags": [
+          "Clouds"
+        ],
+        "operationId": "listClouds",
+        "summary": "List Interop Clouds",
+        "description": "Get a list of Interop Clouds for accounts visible to you.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Cloud response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Cloud"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ingestions": {
+      "get": {
+        "tags": [
+          "Ingestions"
+        ],
+        "operationId": "listIngestions",
+        "summary": "List Ingestions",
+        "description": "Get a list of Ingestions. By default only incomplete Ingestions from the Ingestion Queue are returned.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Ingestions",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Ingestion"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Ingestions"
+        ],
+        "operationId": "createIngestion",
+        "summary": "Create an Ingestion",
+        "description": "Create an Ingestion. Use the resulting session_token to send Load messages containing raw data to be transformed by the Ingestion Pipeline.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Ingestion to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Ingestion"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The created Ingestion",
+            "schema": {
+              "$ref": "#/definitions/Ingestion"
+            }
+          }
+        }
+      }
+    },
+    "/ingestions/{id}": {
+      "get": {
+        "tags": [
+          "Ingestions"
+        ],
+        "operationId": "findIngestion",
+        "summary": "Find an Ingestion by id",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Ingestion to find",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ingestion response",
+            "schema": {
+              "$ref": "#/definitions/Ingestion"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Ingestions"
+        ],
+        "operationId": "cancelIngestion",
+        "summary": "Cancel an Ingestion by id",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Ingestion to cancel",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ingestion response",
+            "schema": {
+              "$ref": "#/definitions/Ingestion"
+            }
+          }
+        }
+      }
+    },
+    "/integrations": {
+      "get": {
+        "tags": [
+          "Integrations"
+        ],
+        "operationId": "listIntegrations",
+        "summary": "List Integrations",
+        "description": "List all Integrations",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Find an Integration by name",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Integrations response",
+            "schema": {
+              "$ref": "#/definitions/IntegrationsResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Integrations"
+        ],
+        "operationId": "createIntegration",
+        "summary": "Create Integration",
+        "description": "Create an Integration",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Integration to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Integration"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/Integration"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/integrations/{id}/versions": {
+      "get": {
+        "tags": [
+          "Integrations"
+        ],
+        "operationId": "listIntegrationVersions",
+        "summary": "List Integration Versions",
+        "description": "List the versions of an Integration. Each version is described by an Integration Blueprint.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Integration",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Integration Versions response",
+            "schema": {
+              "$ref": "#/definitions/IntegrationVersionsResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Integrations"
+        ],
+        "operationId": "createIntegrationVersion",
+        "summary": "Create Integration Version",
+        "description": "Create a new version of an Integration",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Integration",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "blueprint",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "consumes": [
+          "text/plain"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Integration Version response",
+            "schema": {
+              "$ref": "#/definitions/IntegrationVersion"
+            }
+          }
+        }
+      }
+    },
+    "/integrations/{id}/versions/{version}": {
+      "put": {
+        "tags": [
+          "Integrations"
+        ],
+        "operationId": "updateIntegrationVersion",
+        "summary": "Update Integration Version",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Integration to update",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version to update",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "IntegrationVersion response",
+            "schema": {
+              "$ref": "#/definitions/IntegrationVersion"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Integrations"
+        ],
+        "operationId": "deleteIntegrationVersion",
+        "summary": "Delete Integration Version",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Integration to update",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/integrations/{id}": {
+      "get": {
+        "tags": [
+          "Integrations"
+        ],
+        "operationId": "findIntegration",
+        "summary": "Find an Integration",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Integration to find",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Integration response",
+            "schema": {
+              "$ref": "#/definitions/Integration"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Integrations"
+        ],
+        "operationId": "updateIntegration",
+        "summary": "Update Integration",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Integration to update",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Integration response",
+            "schema": {
+              "$ref": "#/definitions/Integration"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Integrations"
+        ],
+        "operationId": "deleteIntegration",
+        "summary": "Delete an Integration",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Integration to delete",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tenants": {
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "security": [
+          { "BasicAuth": [ ] }
+        ], 
+        "operationId": "listInteropTenants",
+        "summary": "List Interop Tenants",
+        "description": "Get a list of `TenantInfo` representing your licensed and authorized Integration tenants.",
+        "parameters": [
+          {
+            "name": "integration",
+            "in": "query",
+            "description": "Optionally restrict the returned list of tenants to only those for the specified Integration or Integrations. Use this parameter when you have multiple Integrations all serviced by the same client application. When omitted, includes tenants of all Integrations owned by your account.",
+            "required": false,
+            "type": "array",
+            "collectionFormat": "csv",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "TenantInfo response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TenantInfo"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

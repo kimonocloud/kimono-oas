@@ -1,0 +1,124 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.0",
+    "title": "Platform API",
+    "description": "Platform APIs provide access to core Kimono Platform resources and operations such as Accounts, Users, and Clouds."
+  },
+  "host": "localhost:5001",
+  "basePath": "/v2/platform",
+  "schemes": [
+    "http","https"
+  ],
+  "securityDefinitions": { 
+    "BasicAuth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    { "BasicAuth": [ ] }
+  ],
+  "definitions": {
+    "BaseResourceType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
+    "PagedDataResponseType": {
+      "type": "object",
+      "properties": {
+        "paging": {
+          "type": "object",
+          "properties": {
+            "next": {
+              "type": "string"
+            },
+            "last": {
+              "type": "string"
+            },
+            "first": {
+              "type": "string"
+            },
+            "prev": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "readOnly": true
+        },
+        "message": {
+          "type": "string",
+          "readOnly": true
+        },
+        "ext_message": {
+          "type": "string",
+          "readOnly": true
+        },
+        "details": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "Account": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/accounts": {
+      "get": {
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "listAccounts",
+        "summary": "Get Accounts",
+        "description": "Get a list of Accounts",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Account response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Account"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

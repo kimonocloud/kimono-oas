@@ -1,0 +1,98 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.0",
+    "title": "Grades Exchange API",
+    "description": "Use the Grades Exchange APIs to implement a Grades Producer or Grades Consumer client application and to manage Exchanges between producers and consumers."
+  },
+  "host": "localhost:5020",
+  "basePath": "/v2/grades",
+  "schemes": [
+    "http","https"
+  ],
+  "securityDefinitions": { 
+    "BasicAuth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    { "BasicAuth": [ ] }
+  ],
+  "definitions": {
+    "BaseResourceType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
+    "PagedDataResponseType": {
+      "type": "object",
+      "properties": {
+        "paging": {
+          "type": "object",
+          "properties": {
+            "next": {
+              "type": "string"
+            },
+            "last": {
+              "type": "string"
+            },
+            "first": {
+              "type": "string"
+            },
+            "prev": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "Exchange": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  "paths": {
+    "/exchanges": {
+      "get": {
+        "tags": [
+          "GradesExchange"
+        ],
+        "operationId": "listExchanges",
+        "summary": "List Grades Exchanges",
+        "description": "Get a list of Grades Exchanges",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Exchanges response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Exchange"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

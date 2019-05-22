@@ -1,0 +1,157 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.0",
+    "title": "SIF Cloud API",
+    "description": "SIF Cloud APIs provide access to SIF Cloud provisioning resources."
+  },
+  "host": "api.kimonocloud.com",
+  "basePath": "/v2/sifcloud",
+  "schemes": [
+    "https"
+  ],
+  "securityDefinitions": { 
+    "BasicAuth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    { "BasicAuth": [ ] }
+  ],
+  "definitions": {
+    "BaseResourceType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
+    "PagedDataResponseType": {
+      "type": "object",
+      "properties": {
+        "paging": {
+          "type": "object",
+          "properties": {
+            "next": {
+              "type": "string"
+            },
+            "last": {
+              "type": "string"
+            },
+            "first": {
+              "type": "string"
+            },
+            "prev": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "readOnly": true
+        },
+        "message": {
+          "type": "string",
+          "readOnly": true
+        },
+        "ext_message": {
+          "type": "string",
+          "readOnly": true
+        },
+        "details": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "SIFClient": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "SIFZone": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/clients": {
+      "get": {
+        "tags": [
+          "Clients"
+        ],
+        "operationId": "listClients",
+        "summary": "Get SIF Clients",
+        "description": "Get a list of `SIFClient`s",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "SIFClient response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SIFClient"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/zones": {
+      "get": {
+        "tags": [
+          "Zones"
+        ],
+        "operationId": "listZones",
+        "summary": "Get SIF Zones",
+        "description": "Get a list of `SIFZone`s",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "SIFZone response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SIFZone"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
