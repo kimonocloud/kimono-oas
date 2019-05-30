@@ -10,6 +10,26 @@
   "schemes": [
     "http","https"
   ],
+  "securityDefinitions": { 
+    "OAuth2": {
+      "type": "oauth2",
+      "flow": "application",
+      "authorizationUrl": "https://api.kimonocloud.com/oauth/token",
+      "tokenUrl": "https://api.kimonocloud.com/oauth/token"
+    },    
+    "BasicAuth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    { "BasicAuth": [ ] }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],  
   "definitions": {
     "BaseResourceType": {
       "type": "object",
@@ -31,6 +51,31 @@
         }
       }
     },
+    "ErrorType": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "description": "Transport-layer status code"
+        },
+        "code": {
+          "type": "string",
+          "description": "Application-layer error code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "ext_message": {
+          "type": "string",
+          "description": "Extended error message"
+        },
+        "details": {
+          "type": "string",
+          "description": "Details that may assist in diagnosing this error"
+        }
+      }
+    },
     "PagedDataResponseType": {
       "type": "object",
       "properties": {
@@ -39,50 +84,18 @@
           "properties": {
             "next": {
               "type": "string"
-            },
-            "last": {
-              "type": "string"
-            },
-            "first": {
-              "type": "string"
-            },
-            "prev": {
-              "type": "string"
-            },
-            "count": {
-              "type": "integer"
             }
           }
         }
       }
-    },
-    "Error": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "string",
-          "readOnly": true
-        },
-        "message": {
-          "type": "string",
-          "readOnly": true
-        },
-        "ext_message": {
-          "type": "string",
-          "readOnly": true
-        },
-        "details": {
-          "type": "string",
-          "readOnly": true
-        }
-      }
-    },
+    },    
     "Message": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string",
-          "format": "uuid"
+          "format": "uuid",
+          "readOnly": true
         },
         "data": {
           "type": "object"
@@ -198,6 +211,104 @@
     }
   },
   "paths": {
+    "/messages": {
+      "get": {
+        "tags": [
+          "Messages"
+        ],
+        "operationId": "listMessages",
+        "summary": "List Messages",
+        "description": "Get the next batch of Messages for the authenticated actor. The number of Messages returned is determined by Kimono and may change from time to time. See [Messages](doc:broker-api-messages) for details.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Messages response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Message"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Messages"
+        ],
+        "operationId": "sendMessage",
+        "summary": "Send Message",
+        "description": "Send a Message",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "message",
+            "in": "body",
+            "description": "The JSON-encoded Message to send",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Message response",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        }
+      }
+    },
+    "/messages/{id}/ack": {
+      "put": {
+        "tags": [
+          "Messages"
+        ],
+        "operationId": "acknowledgeMessage",
+        "summary": "Acknowledge Message",
+        "description": "Each Message that is returned from `listMessages` must be acknowledged to remove it from the Message Queue. If a Message is not acknowledged in a timely fashion Kimono may consider it to have timed-out and will return it in the next `listMessages` response for an actor. See [Messages](doc:broker-api-messages) for details.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Message to acknowledge",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "MessageAck",
+            "in": "body",
+            "description": "Parameters describing how to acknowledge the Message",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/MessageAck"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Message acknowledged successfully"
+          },
+          "404": {
+            "description": "Message not found"
+          }
+        }
+      }
+    },
+
     "/models": {
       "get": {
         "tags": [

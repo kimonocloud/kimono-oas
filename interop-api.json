@@ -11,13 +11,25 @@
     "http","https"
   ],
   "securityDefinitions": { 
+    "OAuth2": {
+      "type": "oauth2",
+      "flow": "application",
+      "authorizationUrl": "https://api.kimonocloud.com/oauth/token",
+      "tokenUrl": "https://api.kimonocloud.com/oauth/token"
+    },    
     "BasicAuth": {
       "type": "basic"
     }
   },
   "security": [
     { "BasicAuth": [ ] }
-  ], 
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "definitions": {
     "BaseResourceType": {
       "type": "object",
@@ -39,6 +51,31 @@
         }
       }
     },
+    "ErrorType": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "description": "Transport-layer status code"
+        },
+        "code": {
+          "type": "string",
+          "description": "Application-layer error code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "ext_message": {
+          "type": "string",
+          "description": "Extended error message"
+        },
+        "details": {
+          "type": "string",
+          "description": "Details that may assist in diagnosing this error"
+        }
+      }
+    },    
     "PagedDataResponseType": {
       "type": "object",
       "properties": {
@@ -47,44 +84,16 @@
           "properties": {
             "next": {
               "type": "string"
-            },
-            "last": {
-              "type": "string"
-            },
-            "first": {
-              "type": "string"
-            },
-            "prev": {
-              "type": "string"
-            },
-            "count": {
-              "type": "integer"
             }
           }
         }
       }
-    },
-    "Error": {
+    }, 
+    "SingleObjectResponseType": {
       "type": "object",
       "properties": {
-        "code": {
-          "type": "string",
-          "readOnly": true
-        },
-        "message": {
-          "type": "string",
-          "readOnly": true
-        },
-        "ext_message": {
-          "type": "string",
-          "readOnly": true
-        },
-        "details": {
-          "type": "string",
-          "readOnly": true
-        }
       }
-    },
+    },    
     "TopicId": {
       "type": "string"
     },
@@ -141,11 +150,10 @@
       "enum": [
         "unspecified",
         "collection",
-        "bulk_load_immediate",
-        "bulk_load_progressive",
+        "bulk_load",
         "event_bundle",
         "bulk_attr_change",
-        "mirror"
+        "mirror"        
       ]
     },
     "IngestionState": {
@@ -304,11 +312,7 @@
         {
           "type": "object",
           "properties": {
-            "actor_id": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "connector_id": {
+            "tenant_id": {
               "type": "string",
               "format": "uuid"
             },
@@ -331,6 +335,40 @@
         }
       ]
     },
+    "IngestionsResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Ingestion"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },
+    "IngestionResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Ingestion"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    },          
     "Integration": {
       "allOf": [
         {
@@ -471,12 +509,9 @@
         ],
         "responses": {
           "200": {
-            "description": "Array of Ingestions",
+            "description": "Ingestions response",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Ingestion"
-              }
+              "$ref": "#/definitions/IngestionsResponse"
             }
           }
         }
@@ -504,9 +539,9 @@
         ],
         "responses": {
           "200": {
-            "description": "The created Ingestion",
+            "description": "Ingestion response",
             "schema": {
-              "$ref": "#/definitions/Ingestion"
+              "$ref": "#/definitions/IngestionResponse"
             }
           }
         }
@@ -537,7 +572,7 @@
           "200": {
             "description": "Ingestion response",
             "schema": {
-              "$ref": "#/definitions/Ingestion"
+              "$ref": "#/definitions/IngestionResponse"
             }
           }
         }
@@ -632,7 +667,7 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/ErrorType"
             }
           }
         }

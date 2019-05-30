@@ -24,6 +24,12 @@
   "security": [
     { "BasicAuth": [ ] }
   ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],  
   "definitions": {
     "ErrorType": {
       "type": "object",
@@ -50,6 +56,24 @@
         }
       }
     },
+    "PagedDataResponseType": {
+      "type": "object",
+      "properties": {
+        "paging": {
+          "type": "object",
+          "properties": {
+            "next": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }, 
+    "SingleObjectResponseType": {
+      "type": "object",
+      "properties": {
+      }
+    },    
     "ObjectType": {
       "type": "object",
       "properties": {
@@ -166,19 +190,6 @@
         }
       }
     },
-    "PagedDataResponseType": {
-      "type": "object",
-      "properties": {
-        "paging": {
-          "type": "object",
-          "properties": {
-            "next": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
     "Org": {
       "allOf": [
         {
@@ -248,6 +259,21 @@
         },
         {
           "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },   
+    "OrgResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Org"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
         }
       ]
     },   
@@ -764,7 +790,7 @@
         }
       }
     },
-    "/rostering/orgs/{org_id}": {
+    "/rostering/orgs/{id}": {
       "get": {
         "tags": [
           "Rostering"
@@ -774,7 +800,7 @@
         "description": "",
         "parameters": [
           {
-            "name": "org_id",
+            "name": "id",
             "in": "path",
             "description": "$sys.id of the object",
             "required": true,
@@ -789,7 +815,7 @@
           "200": {
             "description": "Org response",
             "schema": {
-              "$ref": "#/definitions/Org"
+              "$ref": "#/definitions/OrgResponse"
             }
           }
         }
