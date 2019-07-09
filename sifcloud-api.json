@@ -82,6 +82,14 @@
           }
         }
       }
+    },
+    "SingleObjectResponseType": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorType"
+        }
+      }
     },    
     "SIFClient": {
       "type": "object",
@@ -92,6 +100,40 @@
         }
       }
     },
+    "SIFClientsResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SIFClient"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },   
+    "SIFClientResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/SIFClient"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    },
     "SIFZone": {
       "type": "object",
       "properties": {
@@ -100,6 +142,58 @@
           "format": "uuid"
         }
       }
+    },
+    "SIFZonesResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SIFZone"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },   
+    "SIFZoneResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/SIFZone"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    }
+  },
+  "parameters": {
+    "PageParam": {
+      "name": "page",
+      "in": "query",
+      "description": "Specify the page number (defaults to 1)",
+      "required": false,
+      "type": "integer",
+      "format": "int32"
+    },
+    "PageSizeParam": {
+      "name": "page_size",
+      "in": "query",
+      "description": "Specify the page_size (defaults to the maximum page size)",
+      "required": false,
+      "type": "integer",
+      "format": "int32"
     }
   },
   "paths": {
@@ -111,17 +205,89 @@
         "operationId": "listClients",
         "summary": "Get SIF Clients",
         "description": "Get a list of `SIFClient`s",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "SIFClient response",
+            "description": "SIF Clients response",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/SIFClient"
-              }
+              "$ref": "#/definitions/SIFClientsResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Clients"
+        ],
+        "operationId": "createClient",
+        "summary": "Create a SIF Client",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "SIF Client to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SIFClient"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/SIFClientResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorType"
+            }
+          }          
+        }
+      }
+    },
+    "/clients/{id}": {
+      "get": {
+        "tags": [
+          "Clients"
+        ],
+        "operationId": "findClient",
+        "summary": "Find a `SIFClient`",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the object",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],        
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "SIF Client response",
+            "schema": {
+              "$ref": "#/definitions/SIFClientResponse"
             }
           }
         }
@@ -135,17 +301,89 @@
         "operationId": "listZones",
         "summary": "Get SIF Zones",
         "description": "Get a list of `SIFZone`s",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "SIFZone response",
+            "description": "SIF Zones response",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/SIFZone"
-              }
+              "$ref": "#/definitions/SIFZonesResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Zones"
+        ],
+        "operationId": "createZone",
+        "summary": "Create a SIF Zone",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "SIF Zone to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SIFZone"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/SIFZoneResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorType"
+            }
+          }          
+        }
+      }
+    },
+    "/zones/{id}": {
+      "get": {
+        "tags": [
+          "Zones"
+        ],
+        "operationId": "findZone",
+        "summary": "Find a `SIFZone`",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the object",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],        
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "SIF Zone response",
+            "schema": {
+              "$ref": "#/definitions/SIFZoneResponse"
             }
           }
         }

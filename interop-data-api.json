@@ -72,8 +72,65 @@
     "SingleObjectResponseType": {
       "type": "object",
       "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorType"
+        }
       }
-    },    
+    }, 
+    "BaseResourceType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "readOnly": false
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
+    "BaseAccountResourceType": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "account_id": {
+              "type": "string",
+              "format": "uuid",
+              "readOnly": false
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/BaseResourceType"
+        }
+      ]
+    },
+    "BaseTenantResourceType": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "tenant_id": {
+              "type": "string",
+              "format": "uuid",
+              "readOnly": false
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/BaseAccountResourceType"
+        }
+      ]
+    },       
     "ObjectType": {
       "type": "object",
       "properties": {
@@ -630,6 +687,40 @@
         }
       }
     },
+    "TasksResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Task"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },
+    "TaskResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    },    
     "TaskAck": {
       "type": "object",
       "properties": {
@@ -660,6 +751,116 @@
           "description": "Optional key/value pairs to record in Kimono. Some Task types prescribe parameters be returned when a Task is acknowledged."
         }
       }
+    },
+    "TopicId": {
+      "type": "string"
+    },
+    "IngestionType": {
+      "type": "string",
+      "enum": [
+        "unspecified",
+        "collection",
+        "bulk_load",
+        "event_bundle",
+        "bulk_attr_change",
+        "mirror"        
+      ]
+    },
+    "IngestionState": {
+      "type": "string",
+      "enum": [
+        "unspecified",
+        "preparing",
+        "scheduled",
+        "executing",
+        "success",
+        "failed",
+        "cancelled",
+        "timeout"
+      ]
+    },
+    "Ingestion": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseTenantResourceType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "tenant_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "session_token": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/definitions/IngestionType"
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TopicId"
+              }
+            },
+            "state": {
+              "$ref": "#/definitions/IngestionState"
+            }
+          }
+        }
+      ]
+    },
+    "IngestionsResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Ingestion"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },
+    "IngestionResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Ingestion"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    }
+  },
+  "parameters": {
+    "PageParam": {
+      "name": "page",
+      "in": "query",
+      "description": "Specify the page number (defaults to 1)",
+      "required": false,
+      "type": "integer",
+      "format": "int32"
+    },
+    "PageSizeParam": {
+      "name": "page_size",
+      "in": "query",
+      "description": "Specify the page_size (defaults to the maximum page size)",
+      "required": false,
+      "type": "integer",
+      "format": "int32"
     }
   },
   "paths": {
@@ -671,6 +872,14 @@
         "operationId": "listTasks",
         "summary": "List Tasks",
         "description": "Get the next batch of Tasks for the authenticated actor. The number of Tasks returned is determined by Kimono and may change from time to time. See [Tasks](doc:interop-data-api-tasks) for details.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -678,10 +887,7 @@
           "200": {
             "description": "Tasks response",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Task"
-              }
+              "$ref": "#/definitions/TasksResponse"
             }
           }
         }
@@ -735,6 +941,14 @@
         "operationId": "listOrgs",
         "summary": "List all Orgs",
         "description": "",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -756,6 +970,14 @@
         "operationId": "listLEAs",
         "summary": "List all LEA-type Orgs",
         "description": "",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -777,6 +999,14 @@
         "operationId": "listSchools",
         "summary": "List all School-type Orgs",
         "description": "",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -817,6 +1047,9 @@
             "schema": {
               "$ref": "#/definitions/OrgResponse"
             }
+          },
+          "404": {
+            "description": "Org not found"
           }
         }
       }
@@ -837,6 +1070,12 @@
             "required": true,
             "type": "string",
             "format": "uuid"
+          },
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
           }
         ],
         "produces": [
@@ -848,6 +1087,9 @@
             "schema": {
               "$ref": "#/definitions/PersonsResponse"
             }
+          },
+          "404": {
+            "description": "Org not found"
           }
         }
       }
@@ -868,6 +1110,12 @@
             "required": true,
             "type": "string",
             "format": "uuid"
+          },
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
           }
         ],
         "produces": [
@@ -899,6 +1147,12 @@
             "required": true,
             "type": "string",
             "format": "uuid"
+          },
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
           }
         ],
         "produces": [
@@ -930,6 +1184,12 @@
             "required": true,
             "type": "string",
             "format": "uuid"
+          },
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
           }
         ],
         "produces": [
@@ -961,6 +1221,12 @@
             "required": true,
             "type": "string",
             "format": "uuid"
+          },
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
           }
         ],
         "produces": [
@@ -1015,6 +1281,14 @@
         "operationId": "listPersons",
         "summary": "Get all Persons",
         "description": "",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -1036,6 +1310,14 @@
         "operationId": "listStudents",
         "summary": "List all Student-type Persons",
         "description": "",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -1057,6 +1339,14 @@
         "operationId": "listTeachers",
         "summary": "List all Teacher-type Persons",
         "description": "",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -1109,6 +1399,14 @@
         "operationId": "listCourses",
         "summary": "List all Courses",
         "description": "",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -1161,6 +1459,14 @@
         "operationId": "listSections",
         "summary": "List all Sections",
         "description": "",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -1213,6 +1519,14 @@
         "operationId": "listTerms",
         "summary": "List all Terms",
         "description": "",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -1265,6 +1579,14 @@
         "operationId": "listGradingCategories",
         "summary": "List all Grading Categories",
         "description": "",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -1277,6 +1599,125 @@
           }
         }
       }
+    },
+    "/ingestions": {
+      "get": {
+        "tags": [
+          "Ingestions"
+        ],
+        "operationId": "listIngestions",
+        "summary": "List Ingestions",
+        "description": "Get a list of Ingestions. By default only incomplete Ingestions from the Ingestion Queue are returned.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ingestions response",
+            "schema": {
+              "$ref": "#/definitions/IngestionsResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Ingestions"
+        ],
+        "operationId": "createIngestion",
+        "summary": "Create an Ingestion",
+        "description": "Create an Ingestion. Use the resulting session_token to send Load messages containing raw data to be transformed by the Ingestion Pipeline.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Ingestion to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Ingestion"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/IngestionResponse"
+            }
+          }
+        }
+      }
+    },
+    "/ingestions/{id}": {
+      "get": {
+        "tags": [
+          "Ingestions"
+        ],
+        "operationId": "findIngestion",
+        "summary": "Find an Ingestion by id",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Ingestion to find",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ingestion response",
+            "schema": {
+              "$ref": "#/definitions/IngestionResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Ingestions"
+        ],
+        "operationId": "cancelIngestion",
+        "summary": "Cancel an Ingestion by id",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Ingestion to cancel",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ingestion response",
+            "schema": {
+              "$ref": "#/definitions/Ingestion"
+            }
+          }
+        }
+      }
     }
-  }
+  }  
 }

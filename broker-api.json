@@ -88,6 +88,14 @@
           }
         }
       }
+    },
+    "SingleObjectResponseType": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorType"
+        }
+      }
     },    
     "Message": {
       "type": "object",
@@ -102,6 +110,40 @@
         }
       }
     },
+    "MessagesResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Message"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },   
+    "MessageResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    },     
     "MessageAck": {
       "type": "object",
       "properties": {
@@ -210,6 +252,24 @@
       ]
     }
   },
+  "parameters": {
+    "PageParam": {
+      "name": "page",
+      "in": "query",
+      "description": "Specify the page number (defaults to 1)",
+      "required": false,
+      "type": "integer",
+      "format": "int32"
+    },
+    "PageSizeParam": {
+      "name": "page_size",
+      "in": "query",
+      "description": "Specify the page_size (defaults to the maximum page size)",
+      "required": false,
+      "type": "integer",
+      "format": "int32"
+    }
+  },
   "paths": {
     "/messages": {
       "get": {
@@ -219,6 +279,14 @@
         "operationId": "listMessages",
         "summary": "List Messages",
         "description": "Get the next batch of Messages for the authenticated actor. The number of Messages returned is determined by Kimono and may change from time to time. See [Messages](doc:broker-api-messages) for details.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -260,9 +328,15 @@
         ],
         "responses": {
           "200": {
-            "description": "Message response",
+            "description": "Success",
             "schema": {
-              "$ref": "#/definitions/Message"
+              "$ref": "#/definitions/MessageResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorType"
             }
           }
         }
@@ -308,7 +382,6 @@
         }
       }
     },
-
     "/models": {
       "get": {
         "tags": [
@@ -317,6 +390,14 @@
         "operationId": "listModels",
         "summary": "List Data Models",
         "description": "Get a list of all defined Data Models",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -340,12 +421,18 @@
           "application/json"
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ModelsResponse"
             }
-          }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorType"
+            }
+          }          
         }
       }
     },
@@ -443,6 +530,14 @@
         "operationId": "listVocabularies",
         "summary": "List Vocabularies",
         "description": "Get a list of all defined Vocabularies",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],

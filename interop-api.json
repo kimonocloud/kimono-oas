@@ -37,7 +37,7 @@
         "id": {
           "type": "string",
           "format": "uuid",
-          "readOnly": true
+          "readOnly": false
         },
         "created_at": {
           "type": "string",
@@ -50,6 +50,40 @@
           "readOnly": true
         }
       }
+    },
+    "BaseAccountResourceType": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "account_id": {
+              "type": "string",
+              "format": "uuid",
+              "readOnly": false
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/BaseResourceType"
+        }
+      ]
+    },
+    "BaseTenantResourceType": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "tenant_id": {
+              "type": "string",
+              "format": "uuid",
+              "readOnly": false
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/BaseAccountResourceType"
+        }
+      ]
     },
     "ErrorType": {
       "type": "object",
@@ -92,11 +126,11 @@
     "SingleObjectResponseType": {
       "type": "object",
       "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorType"
+        }
       }
     },    
-    "TopicId": {
-      "type": "string"
-    },
     "AccountRefType": {
       "type": "object",
       "properties": {
@@ -128,6 +162,10 @@
         "name": {
           "type": "string"
         },
+        "generation": {
+          "type": "integer",
+          "format": "int32"
+        },
         "env": {
           "$ref": "#/definitions/CloudEnvRefType"
         }
@@ -144,30 +182,6 @@
           "type": "string"
         }
       }
-    },
-    "IngestionType": {
-      "type": "string",
-      "enum": [
-        "unspecified",
-        "collection",
-        "bulk_load",
-        "event_bundle",
-        "bulk_attr_change",
-        "mirror"        
-      ]
-    },
-    "IngestionState": {
-      "type": "string",
-      "enum": [
-        "unspecified",
-        "preparing",
-        "scheduled",
-        "executing",
-        "success",
-        "failed",
-        "cancelled",
-        "timeout"
-      ]
     },
     "ReleaseState": {
       "type": "string",
@@ -274,68 +288,7 @@
         }
       }
     },
-    "Actor": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/BaseResourceType"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            }
-          }
-        }
-      ]
-    },
-    "Cloud": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/BaseResourceType"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            }
-          }
-        }
-      ]
-    },
-    "Ingestion": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/BaseResourceType"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "tenant_id": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "session_token": {
-              "type": "string"
-            },
-            "type": {
-              "$ref": "#/definitions/IngestionType"
-            },
-            "topics": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/TopicId"
-              }
-            },
-            "state": {
-              "$ref": "#/definitions/IngestionState"
-            }
-          }
-        }
-      ]
-    },
-    "IngestionsResponse": {
+    "TenantInfosResponse": {
       "allOf": [
         {
           "type": "object",
@@ -343,7 +296,7 @@
             "data": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Ingestion"
+                "$ref": "#/definitions/TenantInfo"
               },
               "readOnly": true
             }
@@ -353,14 +306,14 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },
-    "IngestionResponse": {
+    },   
+    "TenantInfoResponse": {
       "allOf": [
         {
           "type": "object",
           "properties": {
             "data": {
-              "$ref": "#/definitions/Ingestion"
+              "$ref": "#/definitions/TenantInfo"
             }
           }
         },
@@ -368,11 +321,128 @@
           "$ref": "#/definitions/SingleObjectResponseType"
         }
       ]
-    },          
+    },      
+    "ActorType": {
+      "type": "string",
+      "enum": [
+        "connector",
+        "integration",
+        "repository",
+        "application"
+      ]
+    },    
+    "Actor": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseAccountResourceType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/definitions/ActorType"
+            }
+          }
+        }
+      ]
+    },
+    "ActorsResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Actor"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },   
+    "ActorResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Actor"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    },   
+    "Cloud": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseAccountResourceType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "userdata": {
+              "type": "string"
+            },
+            "generation": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      ]
+    },
+    "CloudsResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Cloud"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },   
+    "CloudResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Cloud"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    },   
     "Integration": {
       "allOf": [
         {
-          "$ref": "#/definitions/BaseResourceType"
+          "$ref": "#/definitions/BaseAccountResourceType"
         },
         {
           "type": "object",
@@ -381,6 +451,9 @@
               "type": "string"
             },
             "title": {
+              "type": "string"
+            },
+            "version": {
               "type": "string"
             }
           }
@@ -406,10 +479,25 @@
         }
       ]
     },
+    "IntegrationResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Integration"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    },        
     "IntegrationVersion": {
       "allOf": [
         {
-          "$ref": "#/definitions/BaseResourceType"
+          "$ref": "#/definitions/BaseAccountResourceType"
         },
         {
           "type": "object",
@@ -445,6 +533,53 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
+    },
+    "IntegrationVersionResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/IntegrationVersion"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    }
+  },
+  "parameters": {
+    "AccountsParam": {
+      "name": "accounts",
+      "in": "query",
+      "description": "Optionally restrict the returned list of tenants to only those for the specified Accounts.",
+      "required": false,
+      "type": "array",
+      "collectionFormat": "csv",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "PageParam": {
+      "name": "page",
+      "in": "query",
+      "description": "Specify the page number (defaults to 1)",
+      "required": false,
+      "type": "integer",
+      "format": "int32"
+    },
+    "PageSizeParam": {
+      "name": "page_size",
+      "in": "query",
+      "description": "Specify the page_size (defaults to the maximum page size)",
+      "required": false,
+      "type": "integer",
+      "format": "int32"
     }
   },
   "paths": {
@@ -456,17 +591,22 @@
         "operationId": "listActors",
         "summary": "List Actors",
         "description": "Get a list of actors installed in Interop Clouds for accounts visible to you. This API is used to obtain coordinates and credentials essential for interacting with Integrations and other actors.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "Actor response",
+            "description": "Actors response",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Actor"
-              }
+              "$ref": "#/definitions/ActorsResponse"
             }
           }
         }
@@ -480,6 +620,132 @@
         "operationId": "listClouds",
         "summary": "List Interop Clouds",
         "description": "Get a list of Interop Clouds for accounts visible to you.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],        
+        "responses": {
+          "200": {
+            "description": "Clouds response",
+            "schema": {
+              "$ref": "#/definitions/CloudsResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Clouds"
+        ],
+        "operationId": "createCloud",
+        "summary": "Create an Interop Cloud",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Cloud to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Cloud"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/CloudResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorType"
+            }
+          }
+        }
+      }
+    },
+    "/clouds/search": {
+      "get": {
+        "tags": [
+          "Clouds"
+        ],
+        "operationId": "searchClouds",
+        "summary": "Search Interop Clouds",
+        "description": "Get a list of Interop Clouds matching the search criteria.",
+        "parameters": [
+          {
+            "name": "generation",
+            "in": "query",
+            "description": "List all Clouds of a matching generation",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "userdata",
+            "in": "query",
+            "description": "List all Clouds with matching userdata",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "List all Clouds with a matching name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Clouds response",
+            "schema": {
+              "$ref": "#/definitions/CloudsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/clouds/{id}": {
+      "get": {
+        "tags": [
+          "Clouds"
+        ],
+        "operationId": "findCloud",
+        "summary": "Find an Interop Cloud",
+        "description": "Find an Interop Cloud by identifier",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the object",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],        
         "produces": [
           "application/json"
         ],
@@ -487,121 +753,67 @@
           "200": {
             "description": "Cloud response",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Cloud"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ingestions": {
-      "get": {
-        "tags": [
-          "Ingestions"
-        ],
-        "operationId": "listIngestions",
-        "summary": "List Ingestions",
-        "description": "Get a list of Ingestions. By default only incomplete Ingestions from the Ingestion Queue are returned.",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Ingestions response",
-            "schema": {
-              "$ref": "#/definitions/IngestionsResponse"
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Ingestions"
-        ],
-        "operationId": "createIngestion",
-        "summary": "Create an Ingestion",
-        "description": "Create an Ingestion. Use the resulting session_token to send Load messages containing raw data to be transformed by the Ingestion Pipeline.",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Ingestion to create",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Ingestion"
-            }
-          }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Ingestion response",
-            "schema": {
-              "$ref": "#/definitions/IngestionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/ingestions/{id}": {
-      "get": {
-        "tags": [
-          "Ingestions"
-        ],
-        "operationId": "findIngestion",
-        "summary": "Find an Ingestion by id",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "id of the Ingestion to find",
-            "required": true,
-            "type": "string",
-            "format": "uuid"
-          }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Ingestion response",
-            "schema": {
-              "$ref": "#/definitions/IngestionResponse"
+              "$ref": "#/definitions/CloudResponse"
             }
           }
         }
       },
       "delete": {
         "tags": [
-          "Ingestions"
+          "Clouds"
         ],
-        "operationId": "cancelIngestion",
-        "summary": "Cancel an Ingestion by id",
+        "operationId": "deleteCloud",
+        "summary": "Delete an Interop Cloud",
         "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "id of the Ingestion to cancel",
+            "description": "id of the Cloud to delete",
             "required": true,
             "type": "string",
             "format": "uuid"
           }
         ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/clouds/{id}/actors": {
+      "get": {
+        "tags": [
+          "Clouds"
+        ],
+        "operationId": "listActorsByCloud",
+        "summary": "List all Actors in an Interop Cloud",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the object",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],        
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "Ingestion response",
+            "description": "Actors response",
             "schema": {
-              "$ref": "#/definitions/Ingestion"
+              "$ref": "#/definitions/ActorsResponse"
             }
           }
         }
@@ -622,6 +834,12 @@
             "description": "Find an Integration by name",
             "required": false,
             "type": "string"
+          },
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
           }
         ],
         "produces": [
@@ -658,10 +876,10 @@
           "application/json"
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
+            "description": "Success",
             "schema": {
-              "$ref": "#/definitions/Integration"
+              "$ref": "#/definitions/IntegrationResponse"
             }
           },
           "400": {
@@ -689,6 +907,12 @@
             "required": true,
             "type": "string",
             "format": "uuid"
+          },
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
           }
         ],
         "produces": [
@@ -729,23 +953,29 @@
           }
         ],
         "consumes": [
-          "text/plain"
+          "application/xml"
         ],
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "Integration Version response",
+            "description": "Success",
             "schema": {
-              "$ref": "#/definitions/IntegrationVersion"
+              "$ref": "#/definitions/IntegrationVersionResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorType"
             }
           }
         }
       }
     },
     "/integrations/{id}/versions/{version}": {
-      "put": {
+      "patch": {
         "tags": [
           "Integrations"
         ],
@@ -767,17 +997,20 @@
             "description": "version to update",
             "required": true,
             "type": "string"
-          }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "IntegrationVersion response",
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "IntegrationVersion properties to update",
+            "required": true,
             "schema": {
               "$ref": "#/definitions/IntegrationVersion"
             }
+          }          
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
           }
         }
       },
@@ -807,7 +1040,57 @@
         ],
         "responses": {
           "204": {
-            "description": "Success"
+            "description": "No content"
+          }
+        }
+      }
+    },
+    "/integrations/{id}/versions/{version}/blueprint": {
+      "put": {
+        "tags": [
+          "Integrations"
+        ],
+        "operationId": "updateIntegrationBlueprint",
+        "summary": "Update Integration Blueprint",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Integration to update",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version to update",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Integration Blueprint",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "consumes": [
+          "application/xml"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "IntegrationVersion response",
+            "schema": {
+              "$ref": "#/definitions/IntegrationVersionResponse"
+            }
           }
         }
       }
@@ -837,12 +1120,12 @@
           "200": {
             "description": "Integration response",
             "schema": {
-              "$ref": "#/definitions/Integration"
+              "$ref": "#/definitions/IntegrationResponse"
             }
           }
         }
       },
-      "put": {
+      "patch": {
         "tags": [
           "Integrations"
         ],
@@ -857,17 +1140,23 @@
             "required": true,
             "type": "string",
             "format": "uuid"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Integration properties to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Integration"
+            }
           }
         ],
         "produces": [
           "application/json"
         ],
         "responses": {
-          "200": {
-            "description": "Integration response",
-            "schema": {
-              "$ref": "#/definitions/Integration"
-            }
+          "204": {
+            "description": "No content"
           }
         }
       },
@@ -900,15 +1189,15 @@
         "tags": [
           "Tenants"
         ],
-        "security": [
-          { "BasicAuth": [ ] }
-        ], 
         "operationId": "listInteropTenants",
         "summary": "List Interop Tenants",
         "description": "Get a list of `TenantInfo` representing your licensed and authorized Integration tenants.",
         "parameters": [
           {
-            "name": "integration",
+            "$ref": "#/parameters/AccountsParam"
+          },
+          {
+            "name": "integrations",
             "in": "query",
             "description": "Optionally restrict the returned list of tenants to only those for the specified Integration or Integrations. Use this parameter when you have multiple Integrations all serviced by the same client application. When omitted, includes tenants of all Integrations owned by your account.",
             "required": false,
@@ -919,6 +1208,12 @@
             "items": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
           }
         ],
         "produces": [
@@ -926,14 +1221,11 @@
         ],
         "responses": {
           "200": {
-            "description": "TenantInfo response",
+            "description": "TenantInfos response",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/TenantInfo"
-              }
+              "$ref": "#/definitions/TenantInfosResponse"
             }
-          }
+          }          
         }
       }
     }
