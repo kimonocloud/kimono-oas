@@ -5,7 +5,7 @@
     "title": "Interop Data API",
     "description": "Interop Data APIs provide access to the data objects and events from Interop Cloud repositories and Integration repositories"
   },
-  "host": "localhost:5016",
+  "host": "api.us2.kimonocloud.com",
   "basePath": "/v2/interop/data",
   "schemes": [
     "http","https"

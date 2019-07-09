@@ -5,7 +5,7 @@
     "title": "SIF Cloud API",
     "description": "SIF Cloud APIs provide access to SIF Cloud provisioning resources."
   },
-  "host": "api.kimonocloud.com",
+  "host": "api.us2.kimonocloud.com",
   "basePath": "/v2/sifcloud",
   "schemes": [
     "https"

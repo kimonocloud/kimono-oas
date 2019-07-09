@@ -5,7 +5,7 @@
     "title": "Interop API",
     "description": "Interop APIs provide access to Kimono Interop Cloud resources and operations"
   },
-  "host": "localhost:5010",
+  "host": "api.us2.kimonocloud.com",
   "basePath": "/v2/interop",
   "schemes": [
     "http","https"

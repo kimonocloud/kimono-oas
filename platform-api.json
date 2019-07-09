@@ -5,7 +5,7 @@
     "title": "Platform API",
     "description": "Platform APIs provide access to core Kimono Platform resources and operations such as Accounts, Users, and Clouds."
   },
-  "host": "localhost:5001",
+  "host": "api.us2.kimonocloud.com",
   "basePath": "/v2/platform",
   "schemes": [
     "http","https"

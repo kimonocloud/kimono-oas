@@ -5,7 +5,7 @@
     "title": "Grades Exchange API",
     "description": "Use the Grades Exchange APIs to implement a Grades Producer or Grades Consumer client application and to manage Exchanges between producers and consumers."
   },
-  "host": "localhost:5020",
+  "host": "api.us2.kimonocloud.com",
   "basePath": "/v2/grades",
   "schemes": [
     "http","https"
