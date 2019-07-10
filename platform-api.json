@@ -8,7 +8,7 @@
   "host": "api.us2.kimonocloud.com",
   "basePath": "/v2/platform",
   "schemes": [
-    "http","https"
+    "https"
   ],
   "securityDefinitions": { 
     "BasicAuth": {

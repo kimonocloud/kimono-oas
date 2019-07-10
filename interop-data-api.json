@@ -8,21 +8,18 @@
   "host": "api.us2.kimonocloud.com",
   "basePath": "/v2/interop/data",
   "schemes": [
-    "http","https"
+    "https"
   ],
   "securityDefinitions": { 
     "OAuth2": {
       "type": "oauth2",
       "flow": "application",
-      "authorizationUrl": "https://api.kimonocloud.com/oauth/token",
-      "tokenUrl": "https://api.kimonocloud.com/oauth/token"
-    },    
-    "BasicAuth": {
-      "type": "basic"
+      "authorizationUrl": "https://api.us2.kimonocloud.com/oauth/token",
+      "tokenUrl": "https://api.us2.kimonocloud.com/oauth/token"
     }
   },
   "security": [
-    { "BasicAuth": [ ] }
+    { "OAuth2": [ ] }
   ],
   "consumes": [
     "application/json"
