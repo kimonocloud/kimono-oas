@@ -1,2 +1,0 @@
-# kimono-oas
-OpenAPI Specifications

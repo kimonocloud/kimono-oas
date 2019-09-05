@@ -5,13 +5,13 @@
     "title": "Interop Data API",
     "description": "Interop Data APIs provide access to the data objects and events from Interop Cloud repositories and Integration repositories"
   },
-  "host": "api.us2.kimonocloud.com",
   "basePath": "/v2/interop/data",
+  "host": "api.us2.kimonocloud.com",
   "schemes": [
     "https"
   ],
   "securityDefinitions": { 
-    "OAuth2": {
+    "Actor": {
       "type": "oauth2",
       "flow": "application",
       "authorizationUrl": "https://api.us2.kimonocloud.com/oauth/token",
@@ -19,7 +19,7 @@
     }
   },
   "security": [
-    { "OAuth2": [ ] }
+    { "Actor": [ ] }
   ],
   "consumes": [
     "application/json"

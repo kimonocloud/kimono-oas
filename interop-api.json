@@ -5,18 +5,18 @@
     "title": "Interop API",
     "description": "Interop APIs provide access to Kimono Interop Cloud resources and operations"
   },
-  "host": "api.us2.kimonocloud.com",
   "basePath": "/v2/interop",
+  "host": "api.us2.kimonocloud.com",
   "schemes": [
     "https"
   ],
   "securityDefinitions": { 
-    "BasicAuth": {
+    "Vendor": {
       "type": "basic"
     }
   },
   "security": [
-    { "BasicAuth": [ ] }
+    { "Vendor": [ ] }
   ],
   "consumes": [
     "application/json"
@@ -1220,6 +1220,37 @@
               "$ref": "#/definitions/TenantInfosResponse"
             }
           }          
+        }
+      }
+    },
+    "/tenants/{id}": {
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "findInteropTenant",
+        "summary": "Find an TenantInfo by ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the TenantInfo to find",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "TenantInfo response",
+            "schema": {
+              "$ref": "#/definitions/TenantInfoResponse"
+            }
+          }
         }
       }
     }

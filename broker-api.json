@@ -5,13 +5,13 @@
     "title": "Broker API",
     "description": "Broker APIs provide access to Kimono Broker resources and operations"
   },
-  "host": "api.us2.kimonocloud.com",
   "basePath": "/v2/broker",
+  "host": "api.us2.kimonocloud.com",
   "schemes": [
     "https"
   ],
   "securityDefinitions": { 
-    "OAuth2": {
+    "Actor": {
       "type": "oauth2",
       "flow": "application",
       "authorizationUrl": "https://api.us2.kimonocloud.com/oauth/token",
@@ -19,7 +19,7 @@
     }
   },
   "security": [
-    { "OAuth2": [ ] }
+    { "Actor": [ ] }
   ],  
   "consumes": [
     "application/json"
