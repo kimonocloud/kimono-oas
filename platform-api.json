@@ -157,7 +157,7 @@
     "PageParam": {
       "name": "page",
       "in": "query",
-      "description": "Specify the page number (defaults to 1)",
+      "description": "Specify the page number (defaults to 0)",
       "required": false,
       "type": "integer",
       "format": "int32"

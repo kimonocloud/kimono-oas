@@ -14,7 +14,6 @@
     "Actor": {
       "type": "oauth2",
       "flow": "application",
-      "authorizationUrl": "https://api.us2.kimonocloud.com/oauth/token",
       "tokenUrl": "https://api.us2.kimonocloud.com/oauth/token"
     }
   },
@@ -185,7 +184,7 @@
     "PageParam": {
       "name": "page",
       "in": "query",
-      "description": "Specify the page number (defaults to 1)",
+      "description": "Specify the page number (defaults to 0)",
       "required": false,
       "type": "integer",
       "format": "int32"

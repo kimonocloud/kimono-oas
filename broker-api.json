@@ -14,7 +14,6 @@
     "Actor": {
       "type": "oauth2",
       "flow": "application",
-      "authorizationUrl": "https://api.us2.kimonocloud.com/oauth/token",
       "tokenUrl": "https://api.us2.kimonocloud.com/oauth/token"
     }
   },
@@ -253,7 +252,7 @@
     "PageParam": {
       "name": "page",
       "in": "query",
-      "description": "Specify the page number (defaults to 1)",
+      "description": "Specify the page number (defaults to 0)",
       "required": false,
       "type": "integer",
       "format": "int32"
@@ -553,14 +552,14 @@
         "tags": [
           "Vocabulary"
         ],
-        "operationId": "findModel",
-        "summary": "Get a Data Model by id",
+        "operationId": "findVocabulary",
+        "summary": "Get a Vocabulary by id",
         "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "id of the Model to find",
+            "description": "id of the Vocabulary to find",
             "required": true,
             "type": "string",
             "format": "uuid"
@@ -582,14 +581,14 @@
         "tags": [
           "Vocabulary"
         ],
-        "operationId": "updateModel",
-        "summary": "Update the properties of a Data Model",
+        "operationId": "updateVocabulary",
+        "summary": "Update the properties of a Vocabulary",
         "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "id of the Model",
+            "description": "id of the Vocabulary",
             "required": true,
             "type": "string",
             "format": "uuid"
@@ -600,9 +599,9 @@
         ],
         "responses": {
           "200": {
-            "description": "DataModels response",
+            "description": "Vocabularys response",
             "schema": {
-              "$ref": "#/definitions/ModelsResponse"
+              "$ref": "#/definitions/VocabularysResponse"
             }
           }
         }
