@@ -10,7 +10,7 @@
   "schemes": [
     "https"
   ],
-  "securityDefinitions": { 
+  "securityDefinitions": {
     "Actor": {
       "type": "oauth2",
       "flow": "application",
@@ -25,7 +25,7 @@
   ],
   "produces": [
     "application/json"
-  ],  
+  ],
   "definitions": {
     "ErrorType": {
       "type": "object",
@@ -64,7 +64,7 @@
           }
         }
       }
-    }, 
+    },
     "SingleObjectResponseType": {
       "type": "object",
       "properties": {
@@ -72,7 +72,7 @@
           "$ref": "#/definitions/ErrorType"
         }
       }
-    }, 
+    },
     "BaseResourceType": {
       "type": "object",
       "properties": {
@@ -123,10 +123,10 @@
           }
         },
         {
-          "$ref": "#/definitions/BaseAccountResourceType"
+          "$ref": "#/definitions/BaseResourceType"
         }
       ]
-    },       
+    },
     "ObjectType": {
       "type": "object",
       "properties": {
@@ -274,7 +274,7 @@
           }
         }
       ]
-    }, 
+    },
     "TermRefType": {
       "allOf": [
         {
@@ -292,7 +292,7 @@
           }
         }
       ]
-    },       
+    },
     "MembershipRefType": {
       "allOf": [
         {
@@ -347,7 +347,7 @@
           }
         }
       ]
-    },             
+    },
     "NameType": {
       "type": "object",
       "properties": {
@@ -459,7 +459,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "OrgResponse": {
       "allOf": [
         {
@@ -474,7 +474,7 @@
           "$ref": "#/definitions/SingleObjectResponseType"
         }
       ]
-    },   
+    },
     "Person": {
       "allOf": [
         {
@@ -568,7 +568,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "Course": {
       "allOf": [
         {
@@ -629,7 +629,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "Section": {
       "allOf": [
         {
@@ -705,7 +705,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "Term": {
       "allOf": [
         {
@@ -772,7 +772,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "GradingCategory": {
       "type": "object",
       "properties": {
@@ -799,32 +799,85 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
+    "DataEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseTenantResourceType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": [
+                "ADD",
+                "UPDATE",
+                "DELETE",
+                "SET",
+                "UNSET"
+              ]
+            },
+            "object_type": {
+              "type": "string"
+            },
+            "object_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "data": {
+              "type": "object"
+            },
+            "changes": {
+              "type": "object"
+            }
+          }
+
+        }
+      ]
+    },
+    "SyncEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseTenantResourceType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": [
+                "SYNC_START",
+                "SYNC_END"
+              ]
+            },
+            "object_type": {
+              "type": "string"
+            },
+            "object_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "origin": {
+              "type": "string"
+            }
+          }
+
+        }
+      ]
+    },
     "Task": {
       "type": "object",
       "properties": {
-        "id": {
+        "schema": {
           "type": "string",
-          "format": "uuid"
+          "description": "TBD"
         },
-        "action": {
-          "type": "string",
-          "enum": [
-            "add",
-            "update",
-            "delete",
-            "set",
-            "unset"
-          ]
+        "sync_event": {
+          "$ref": "#/definitions/SyncEvent"
         },
-        "topic": {
-          "type": "string"
-        },
-        "batch_id": {
-          "type": "string"
-        },
-        "data": {
-          "type": "object"
+        "data_event": {
+          "$ref": "#/definitions/DataEvent"
         }
       }
     },
@@ -861,7 +914,7 @@
           "$ref": "#/definitions/SingleObjectResponseType"
         }
       ]
-    },    
+    },
     "TaskAck": {
       "type": "object",
       "properties": {
@@ -904,7 +957,7 @@
         "bulk_load",
         "event_bundle",
         "bulk_attr_change",
-        "mirror"        
+        "mirror"
       ]
     },
     "IngestionState": {
@@ -924,6 +977,9 @@
       "allOf": [
         {
           "$ref": "#/definitions/BaseTenantResourceType"
+        },
+        {
+          "$ref": "#/definitions/BaseAccountResourceType"
         },
         {
           "type": "object",
@@ -1860,5 +1916,5 @@
         }
       }
     }
-  }  
+  }
 }
