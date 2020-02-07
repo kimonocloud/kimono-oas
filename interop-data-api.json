@@ -123,7 +123,7 @@
           }
         },
         {
-          "$ref": "#/definitions/BaseResourceType"
+          "$ref": "#/definitions/BaseAccountResourceType"
         }
       ]
     },
@@ -977,9 +977,6 @@
       "allOf": [
         {
           "$ref": "#/definitions/BaseTenantResourceType"
-        },
-        {
-          "$ref": "#/definitions/BaseAccountResourceType"
         },
         {
           "type": "object",
