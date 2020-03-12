@@ -5,25 +5,30 @@
     "title": "Platform API",
     "description": "Platform APIs provide access to core Kimono Platform resources and operations such as Accounts, Users, and Clouds."
   },
-  "basePath": "/v2/platform",
   "host": "api.us2.kimonocloud.com",
   "schemes": [
     "https"
   ],
-  "securityDefinitions": { 
-    "Vendor": {
-      "type": "basic"
+  "securityDefinitions": {
+    "Actor": {
+      "type": "oauth2",
+      "flow": "application",
+      "tokenUrl": "https://api.us2.kimonocloud.com/oauth/token"
     }
   },
   "security": [
-    { "Vendor": [ ] }
+    {
+      "Actor": [
+
+      ]
+    }
   ],
   "consumes": [
     "application/json"
   ],
   "produces": [
     "application/json"
-  ],  
+  ],
   "definitions": {
     "BaseResourceType": {
       "type": "object",
@@ -82,7 +87,7 @@
           }
         }
       }
-    }, 
+    },
     "SingleObjectResponseType": {
       "type": "object",
       "properties": {
@@ -90,7 +95,7 @@
           "$ref": "#/definitions/ErrorType"
         }
       }
-    },    
+    },
     "AccountType": {
       "type": "string",
       "enum": [
@@ -100,7 +105,7 @@
         "personal",
         "state_education_agency",
         "partner",
-        "higher_ed"      
+        "higher_ed"
       ]
     },
     "Account": {
@@ -136,7 +141,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "AccountResponse": {
       "allOf": [
         {
@@ -233,7 +238,7 @@
             "schema": {
               "$ref": "#/definitions/ErrorType"
             }
-          }          
+          }
         }
       }
     },
@@ -275,7 +280,7 @@
             "type": "string",
             "format": "uuid"
           }
-        ],        
+        ],
         "produces": [
           "application/json"
         ],
@@ -313,7 +318,7 @@
               "$ref": "#/definitions/Account"
             }
           }
-        ],        
+        ],
         "produces": [
           "application/json"
         ],
@@ -344,7 +349,7 @@
           "204": {
             "description": "No content"
           }
-        }    
+        }
       }
     }
   }

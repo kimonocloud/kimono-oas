@@ -10,13 +10,19 @@
   "schemes": [
     "https"
   ],
-  "securityDefinitions": { 
-    "Vendor": {
-      "type": "basic"
+  "securityDefinitions": {
+    "Actor": {
+      "type": "oauth2",
+      "flow": "application",
+      "tokenUrl": "https://api.us2.kimonocloud.com/oauth/token"
     }
   },
   "security": [
-    { "Vendor": [ ] }
+    {
+      "Actor": [
+
+      ]
+    }
   ],
   "consumes": [
     "application/json"
@@ -103,7 +109,7 @@
           "description": "Details that may assist in diagnosing this error"
         }
       }
-    },    
+    },
     "PagedDataResponseType": {
       "type": "object",
       "properties": {
@@ -116,7 +122,7 @@
           }
         }
       }
-    }, 
+    },
     "SingleObjectResponseType": {
       "type": "object",
       "properties": {
@@ -124,7 +130,7 @@
           "$ref": "#/definitions/ErrorType"
         }
       }
-    },    
+    },
     "AccountRefType": {
       "type": "object",
       "properties": {
@@ -300,7 +306,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "TenantInfoResponse": {
       "allOf": [
         {
@@ -315,7 +321,7 @@
           "$ref": "#/definitions/SingleObjectResponseType"
         }
       ]
-    },      
+    },
     "ActorType": {
       "type": "string",
       "enum": [
@@ -324,7 +330,7 @@
         "repository",
         "application"
       ]
-    },    
+    },
     "Actor": {
       "allOf": [
         {
@@ -361,7 +367,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "ActorResponse": {
       "allOf": [
         {
@@ -376,7 +382,7 @@
           "$ref": "#/definitions/SingleObjectResponseType"
         }
       ]
-    },   
+    },
     "Cloud": {
       "allOf": [
         {
@@ -417,7 +423,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "CloudResponse": {
       "allOf": [
         {
@@ -432,7 +438,7 @@
           "$ref": "#/definitions/SingleObjectResponseType"
         }
       ]
-    },   
+    },
     "Integration": {
       "allOf": [
         {
@@ -487,7 +493,7 @@
           "$ref": "#/definitions/SingleObjectResponseType"
         }
       ]
-    },        
+    },
     "IntegrationVersion": {
       "allOf": [
         {
@@ -535,6 +541,171 @@
           "properties": {
             "data": {
               "$ref": "#/definitions/IntegrationVersion"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    },
+    "ScopingCourse": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string",
+          "format": "uuid",
+          "readOnly": false
+        },
+        "tenant_id": {
+          "type": "string",
+          "format": "uuid",
+          "readOnly": false
+        },
+        "course_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "course_ref_id": {
+          "type": "string"
+        },
+        "school_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "school_ref_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "local_id": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "selected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ScopingCoursesBulkRequest": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ScopingCourse"
+          }
+        }
+      }
+    },
+    "ScopingCoursesResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ScopingCourse"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },
+    "ScopingCourseResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/ScopingCourse"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    },
+    "ScopingSchool": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string",
+          "format": "uuid",
+          "readOnly": false
+        },
+        "tenant_id": {
+          "type": "string",
+          "format": "uuid",
+          "readOnly": false
+        },
+        "school_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "school_ref_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "local_id": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "selected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ScopingSchoolsBulkRequest": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ScopingSchool"
+          }
+        }
+      }
+    },
+    "ScopingSchoolsResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ScopingSchool"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },
+    "ScopingSchoolResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/ScopingSchool"
             }
           }
         },
@@ -624,7 +795,7 @@
         ],
         "produces": [
           "application/json"
-        ],        
+        ],
         "responses": {
           "200": {
             "description": "Clouds response",
@@ -739,7 +910,7 @@
             "type": "string",
             "format": "uuid"
           }
-        ],        
+        ],
         "produces": [
           "application/json"
         ],
@@ -799,7 +970,7 @@
           {
             "$ref": "#/parameters/PageSizeParam"
           }
-        ],        
+        ],
         "produces": [
           "application/json"
         ],
@@ -1000,7 +1171,7 @@
             "schema": {
               "$ref": "#/definitions/IntegrationVersion"
             }
-          }          
+          }
         ],
         "responses": {
           "204": {
@@ -1213,13 +1384,20 @@
         "produces": [
           "application/json"
         ],
+        "security": [
+          {
+            "Vendor": [
+
+            ]
+          }
+        ],
         "responses": {
           "200": {
             "description": "TenantInfos response",
             "schema": {
               "$ref": "#/definitions/TenantInfosResponse"
             }
-          }          
+          }
         }
       }
     },
@@ -1229,7 +1407,7 @@
           "Tenants"
         ],
         "operationId": "findInteropTenant",
-        "summary": "Find an TenantInfo by ID",
+        "summary": "Find Interop Tenant",
         "description": "",
         "parameters": [
           {
@@ -1250,6 +1428,380 @@
             "schema": {
               "$ref": "#/definitions/TenantInfoResponse"
             }
+          }
+        }
+      }
+    },
+    "/tenant/scoping/schools": {
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "listScopingSchools",
+        "summary": "List Scoping Schools",
+        "description": "Get the list of `ScopingSchool`s that define how to scope this tenant's repository by school",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "ScopingSchools response",
+            "schema": {
+              "$ref": "#/definitions/ScopingSchoolsResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "createScopingSchools",
+        "summary": "Create Scoping Schools",
+        "description": "",
+        "parameters": [
+          {
+            "name": "replace",
+            "in": "query",
+            "description": "true to replace existing Scoping Schools, false to append to existing Scoping Schools",
+            "required": false,
+            "default": true,
+            "type": "boolean"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "One or more Scoping Schools to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ScopingSchoolsBulkRequest"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ScopingSchoolResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorType"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "deleteScopingSchools",
+        "summary": "Delete Scoping Schools",
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tenant/scoping/schools/{id}": {
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "findScopingSchool",
+        "summary": "Find Scoping School",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the ScopingSchool to find",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "ScopingSchool response",
+            "schema": {
+              "$ref": "#/definitions/ScopingSchoolResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "updateScopingSchool",
+        "summary": "Update Scoping School",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Scoping School to update",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Scoping School",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ScopingSchool"
+            }
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "ScopingSchool response",
+            "schema": {
+              "$ref": "#/definitions/ScopingSchoolResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "deleteScopingSchool",
+        "summary": "Delete Scoping School",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the ScopingSchool",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tenant/scoping/courses": {
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "listScopingCourses",
+        "summary": "List Scoping Courses",
+        "description": "Get the list of Scoping Courses to apply to this tenant's repository",
+        "parameters": [
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "ScopingCourses response",
+            "schema": {
+              "$ref": "#/definitions/ScopingCoursesResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "createScopingCourses",
+        "summary": "Create Scoping Courses",
+        "description": "",
+        "parameters": [
+          {
+            "name": "replace",
+            "in": "query",
+            "description": "true to replace existing Scoping Courses, false to append to existing Scoping Courses",
+            "required": false,
+            "default": true,
+            "type": "boolean"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "One or more Scoping Courses to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ScopingCoursesBulkRequest"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ScopingCourseResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorType"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "deleteScopingCourses",
+        "summary": "Delete Scoping Courses",
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tenant/scoping/courses/{id}": {
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "findScopingCourse",
+        "summary": "Find Scoping Course",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the ScopingCourse to find",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "ScopingCourse response",
+            "schema": {
+              "$ref": "#/definitions/ScopingCourseResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "updateScopingCourse",
+        "summary": "Update Scoping Course",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Scoping Course to update",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Scoping Course",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ScopingCourse"
+            }
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "ScopingCourse response",
+            "schema": {
+              "$ref": "#/definitions/ScopingCourseResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "deleteScopingCourse",
+        "summary": "Delete Scoping Course",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the ScopingCourse",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
           }
         }
       }

@@ -10,7 +10,7 @@
   "schemes": [
     "https"
   ],
-  "securityDefinitions": { 
+  "securityDefinitions": {
     "Actor": {
       "type": "oauth2",
       "flow": "application",
@@ -18,14 +18,18 @@
     }
   },
   "security": [
-    { "Actor": [ ] }
+    {
+      "Actor": [
+
+      ]
+    }
   ],
   "consumes": [
     "application/json"
   ],
   "produces": [
     "application/json"
-  ],  
+  ],
   "definitions": {
     "ErrorType": {
       "type": "object",
@@ -64,7 +68,7 @@
           }
         }
       }
-    }, 
+    },
     "SingleObjectResponseType": {
       "type": "object",
       "properties": {
@@ -72,7 +76,7 @@
           "$ref": "#/definitions/ErrorType"
         }
       }
-    }, 
+    },
     "BaseResourceType": {
       "type": "object",
       "properties": {
@@ -126,7 +130,7 @@
           "$ref": "#/definitions/BaseAccountResourceType"
         }
       ]
-    },       
+    },
     "ObjectType": {
       "type": "object",
       "properties": {
@@ -221,6 +225,14 @@
         }
       ]
     },
+    "RefSys": {
+      "type": "object",
+      "properties": {
+        "$sys": {
+          "$ref": "#/definitions/RefType"
+        }
+      }
+    },
     "RefType": {
       "type": "object",
       "properties": {
@@ -236,6 +248,14 @@
         "label": {
           "type": "string",
           "readOnly": true
+        }
+      }
+    },
+    "OrgSys": {
+      "type": "object",
+      "properties": {
+        "$sys": {
+          "$ref": "#/definitions/OrgRefType"
         }
       }
     },
@@ -257,6 +277,25 @@
         }
       ]
     },
+    "SectionSys": {
+      "type": "object",
+      "properties": {
+        "$sys": {
+          "$ref": "#/definitions/SectionRefType"
+        }
+      }
+    },
+    "SectionRefType": {
+      "$ref": "#/definitions/RefType"
+    },
+    "PersonSys": {
+      "type": "object",
+      "properties": {
+        "$sys": {
+          "$ref": "#/definitions/PersonRefType"
+        }
+      }
+    },
     "PersonRefType": {
       "allOf": [
         {
@@ -274,7 +313,15 @@
           }
         }
       ]
-    }, 
+    },
+    "TermSys": {
+      "type": "object",
+      "properties": {
+        "$sys": {
+          "$ref": "#/definitions/TermRefType"
+        }
+      }
+    },
     "TermRefType": {
       "allOf": [
         {
@@ -292,7 +339,7 @@
           }
         }
       ]
-    },       
+    },
     "MembershipRefType": {
       "allOf": [
         {
@@ -312,6 +359,14 @@
         }
       ]
     },
+    "OrgMembershipSys": {
+      "type": "object",
+      "properties": {
+        "$sys": {
+          "$ref": "#/definitions/OrgMembershipRefType"
+        }
+      }
+    },
     "OrgMembershipRefType": {
       "allOf": [
         {
@@ -330,6 +385,14 @@
         }
       ]
     },
+    "PersonMembershipSys": {
+      "type": "object",
+      "properties": {
+        "$sys": {
+          "$ref": "#/definitions/PersonMembershipRefType"
+        }
+      }
+    },
     "PersonMembershipRefType": {
       "allOf": [
         {
@@ -347,7 +410,7 @@
           }
         }
       ]
-    },             
+    },
     "NameType": {
       "type": "object",
       "properties": {
@@ -409,27 +472,27 @@
               "readOnly": true
             },
             "$parent": {
-              "$ref": "#/definitions/OrgRefType",
+              "$ref": "#/definitions/OrgSys",
               "readOnly": true
             },
             "$children": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/OrgRefType"
+                "$ref": "#/definitions/OrgSys"
               },
               "readOnly": true
             },
             "$students": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/PersonMembershipRefType"
+                "$ref": "#/definitions/PersonMembershipSys"
               },
               "readOnly": true
             },
             "$teachers": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/PersonMembershipRefType"
+                "$ref": "#/definitions/PersonMembershipSys"
               },
               "readOnly": true
             }
@@ -459,7 +522,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "OrgResponse": {
       "allOf": [
         {
@@ -474,7 +537,7 @@
           "$ref": "#/definitions/SingleObjectResponseType"
         }
       ]
-    },   
+    },
     "Person": {
       "allOf": [
         {
@@ -535,7 +598,7 @@
             "$schools": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/OrgMembershipRefType"
+                "$ref": "#/definitions/OrgMembershipSys"
               },
               "readOnly": true
             },
@@ -568,7 +631,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "Course": {
       "allOf": [
         {
@@ -596,14 +659,14 @@
             "$orgs": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/OrgRefType"
+                "$ref": "#/definitions/OrgSys"
               },
               "readOnly": true
             },
             "$sections": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/RefType"
+                "$ref": "#/definitions/SectionSys"
               },
               "readOnly": true
             }
@@ -629,7 +692,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "Section": {
       "allOf": [
         {
@@ -657,29 +720,29 @@
             "$terms": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/TermRefType"
+                "$ref": "#/definitions/TermSys"
               },
               "readOnly": true
             },
             "$course": {
-              "$ref": "#/definitions/RefType",
+              "$ref": "#/definitions/RefSys",
               "readOnly": true
             },
             "$org": {
-              "$ref": "#/definitions/OrgRefType",
+              "$ref": "#/definitions/OrgSys",
               "readOnly": true
             },
             "$teachers": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/PersonMembershipRefType"
+                "$ref": "#/definitions/PersonMembershipSys"
               },
               "readOnly": true
             },
             "$students": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/PersonMembershipRefType"
+                "$ref": "#/definitions/PersonMembershipSys"
               },
               "readOnly": true
             }
@@ -705,7 +768,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "Term": {
       "allOf": [
         {
@@ -740,13 +803,13 @@
               "readOnly": true
             },
             "$parent": {
-              "$ref": "#/definitions/TermRefType",
+              "$ref": "#/definitions/TermSys",
               "readOnly": true
             },
             "$children": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/TermRefType"
+                "$ref": "#/definitions/TermSys"
               },
               "readOnly": true
             }
@@ -772,14 +835,38 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "GradingCategory": {
-      "type": "object",
-      "properties": {
-        "$sys": {
-          "$ref": "#/definitions/SysType"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ObjectType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "$sys": {
+              "$ref": "#/definitions/SysType",
+              "readOnly": true
+            },
+            "name": {
+              "type": "string",
+              "readOnly": true
+            },
+            "$term": {
+              "$ref": "#/definitions/TermSys",
+              "readOnly": true
+            },
+            "$section": {
+              "$ref": "#/definitions/SectionSys",
+              "readOnly": true
+            },
+            "$schools": {
+              "$ref": "#/definitions/OrgMembershipSys",
+              "readOnly": true
+            }
+          }
         }
-      }
+      ]
     },
     "GradingCategorysResponse": {
       "allOf": [
@@ -799,7 +886,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "Task": {
       "type": "object",
       "properties": {
@@ -861,7 +948,7 @@
           "$ref": "#/definitions/SingleObjectResponseType"
         }
       ]
-    },    
+    },
     "TaskAck": {
       "type": "object",
       "properties": {
@@ -904,7 +991,7 @@
         "bulk_load",
         "event_bundle",
         "bulk_attr_change",
-        "mirror"        
+        "mirror"
       ]
     },
     "IngestionState": {
@@ -1712,7 +1799,7 @@
         }
       }
     },
-    "/grades/categories": {
+    "/grades/gradingCategories": {
       "get": {
         "tags": [
           "Grades"
@@ -1860,5 +1947,5 @@
         }
       }
     }
-  }  
+  }
 }

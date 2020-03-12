@@ -10,7 +10,7 @@
   "schemes": [
     "https"
   ],
-  "securityDefinitions": { 
+  "securityDefinitions": {
     "Actor": {
       "type": "oauth2",
       "flow": "application",
@@ -18,8 +18,12 @@
     }
   },
   "security": [
-    { "Actor": [ ] }
-  ],  
+    {
+      "Actor": [
+
+      ]
+    }
+  ],
   "definitions": {
     "BaseResourceType": {
       "type": "object",
@@ -79,6 +83,45 @@
         }
       }
     },
+    "GradesRefType": {
+      "type": "object",
+      "properties": {
+        "$sys": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "source_id": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "app_id": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time",
+              "readOnly": true
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time",
+              "readOnly": true
+            }
+          }
+        }
+      },
+      "example": {
+        "id": "guid"
+      }
+    },
     "SingleObjectResponseType": {
       "type": "object",
       "properties": {
@@ -86,10 +129,102 @@
           "$ref": "#/definitions/ErrorType"
         }
       }
-    },    
-    "Exchange": {
+    },
+    "ExchangeQueryConditions": {
       "type": "object",
-      "properties": {}
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": [
+            "course",
+            "section"
+          ]
+        },
+        "scope_by": {
+          "type": "string",
+          "enum": [
+            "id",
+            "all"
+          ]
+        },
+        "scope_id": {
+          "$ref": "#/definitions/GradesRefType"
+        },
+        "graded_after": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "summary_type": {
+          "type": "string",
+          "enum": [
+            "final",
+            "midterm"
+          ]
+        }
+      }
+    },
+    "ExchangeQuery": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "assignment_scores",
+            "summary"
+          ]
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExchangeQueryConditions"
+          }
+        }
+      }
+    },
+    "Exchange": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "query": {
+              "$ref": "#/definitions/ExchangeQuery"
+            },
+            "state": {
+              "type": "integer",
+              "enum": [
+                "created",
+                "queried",
+                "query_processing",
+                "exported",
+                "export_processing",
+                "complete",
+                "failed",
+                "canceled"
+              ],
+              "readOnly": true
+            },
+            "max_data_content_length": {
+              "type": "integer",
+              "readOnly": true
+            },
+            "error_count": {
+              "type": "integer",
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/BaseResourceType"
+        }
+      ]
+    },
+    "ExchangesRequest": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "$ref": "#/definitions/ExchangeQuery"
+        }
+      }
     },
     "ExchangesResponse": {
       "allOf": [
@@ -109,7 +244,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "ExchangeResponse": {
       "allOf": [
         {
@@ -122,6 +257,272 @@
         },
         {
           "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    },
+    "ExtType": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "AssignmentScore": {
+      "type": "object",
+      "properties": {
+        "$person": {
+          "$ref": "#/definitions/GradesRefType"
+        },
+        "$grader": {
+          "$ref": "#/definitions/GradesRefType"
+        },
+        "score": {
+          "type": "number"
+        },
+        "grade": {
+          "type": "string"
+        },
+        "late": {
+          "type": "boolean"
+        },
+        "excused": {
+          "type": "boolean"
+        },
+        "submitted_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "preview_url": {
+          "type": "string"
+        },
+        "$ext": {
+          "$ref": "#/definitions/ExtType"
+        }
+      }
+    },
+    "Assignment": {
+      "type": "object",
+      "properties": {
+        "$sys": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "source_id": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "app_id": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "$section": {
+          "$ref": "#/definitions/GradesRefType"
+        },
+        "$category": {
+          "$ref": "#/definitions/GradesRefType"
+        },
+        "$term": {
+          "$ref": "#/definitions/GradesRefType"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "points_possible": {
+          "type": "number"
+        },
+        "due_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "available_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "$ext": {
+          "$ref": "#/definitions/ExtType"
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AssignmentScore"
+          }
+        }
+      }
+    },
+    "Summary": {
+      "type": "object",
+      "properties": {
+        "$section": {
+          "$ref": "#/definitions/GradesRefType"
+        },
+        "$person": {
+          "$ref": "#/definitions/GradesRefType"
+        },
+        "$grader": {
+          "$ref": "#/definitions/GradesRefType"
+        },
+        "summary_type": {
+          "type": "string",
+          "enum": [
+            "midterm",
+            "final"
+          ]
+        },
+        "score_type": {
+          "type": "string",
+          "enum": [
+            "raw",
+            "percentage"
+          ]
+        },
+        "score": {
+          "type": "number"
+        },
+        "grade": {
+          "type": "string"
+        },
+        "last_activity": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "$ext": {
+          "$ref": "#/definitions/ExtType"
+        }
+      }
+    },
+    "ExchangeDataRequest": {
+      "type": "object",
+      "properties": {
+        "assignments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Assignment"
+          }
+        },
+        "summaries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Summary"
+          }
+        },
+        "final": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ExchangeData": {
+      "$ref": "#/definitions/BaseResourceType"
+    },
+    "ExchangeDataResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/ExchangeData"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/SingleObjectResponseType"
+        }
+      ]
+    },
+    "ExchangeError": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "code": {
+          "type": "string",
+          "enum": [
+            "query_type_not_supported",
+            "query_conditions_not_supported",
+            "producer_error",
+            "producer_failure"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "readOnly": true
+        },
+        "details": {
+          "type": "string"
+        }
+      }
+    },
+    "ExchangeErrorRequest": {
+      "$ref": "#/definitions/ExchangeError"
+    },
+    "ExchangeErrorResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/ExchangeError"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
+        }
+      ]
+    },
+    "ExchangeErrorsResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ExchangeError"
+              },
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
     }
@@ -170,6 +571,212 @@
             "schema": {
               "$ref": "#/definitions/ExchangesResponse"
             }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "GradesExchange"
+        ],
+        "operationId": "createExchange",
+        "summary": "Create a Grades Exchange",
+        "description": "Create a Grades Exchange",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Exchange to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ExchangesRequest"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Exchanges response",
+            "schema": {
+              "$ref": "#/definitions/ExchangeDataResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorType"
+            }
+          }
+        }
+      }
+    },
+    "/exchanges/{id}": {
+      "get": {
+        "tags": [
+          "GradesExchange"
+        ],
+        "operationId": "findExchange",
+        "summary": "Find a Grades Exchange by id",
+        "description": "Get an Exchange",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Exchange to find",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Exchanges response",
+            "schema": {
+              "$ref": "#/definitions/ExchangeResponse"
+            }
+          },
+          "404": {
+            "description": "Exchange not found"
+          }
+        }
+      }
+    },
+    "/exchanges/{id}/errors": {
+      "get": {
+        "tags": [
+          "GradesExchange"
+        ],
+        "operationId": "listExchangeErrors",
+        "summary": "List Grades Exchange Errors",
+        "description": "Get a list of Grades Exchange Errors",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Exchange to list Errors",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "$ref": "#/parameters/PageParam"
+          },
+          {
+            "$ref": "#/parameters/PageSizeParam"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Exchange Errors response",
+            "schema": {
+              "$ref": "#/definitions/ExchangeErrorsResponse"
+            }
+          },
+          "404": {
+            "description": "Exchange not found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "GradesExchange"
+        ],
+        "operationId": "createExchangeError",
+        "summary": "Create Grades Exchange Errors",
+        "description": "Create a list of Grades Exchange Errors",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Exchange to create Errors",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Exchange to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ExchangeErrorRequest"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Exchange Errors response",
+            "schema": {
+              "$ref": "#/definitions/ExchangeErrorResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorType"
+            }
+          },
+          "404": {
+            "description": "Exchange not found"
+          }
+        }
+      }
+    },
+    "/exchanges/{id}/data": {
+      "post": {
+        "tags": [
+          "GradesExchange"
+        ],
+        "operationId": "createExchangeData",
+        "summary": "Create Grades Exchange Data",
+        "description": "Create Grades data for an Exchange",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the Exchange to create Data",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Exchange Data to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ExchangeDataRequest"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Exchanges response",
+            "schema": {
+              "$ref": "#/definitions/ExchangeDataResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorType"
+            }
+          },
+          "404": {
+            "description": "Exchange not found"
           }
         }
       }

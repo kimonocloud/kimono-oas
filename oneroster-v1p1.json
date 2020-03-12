@@ -20,7 +20,9 @@
   },
   "security": [
     {
-      "OAuth2": []
+      "OAuth2": [
+
+      ]
     }
   ],
   "definitions": {
@@ -272,7 +274,7 @@
     },
     "UserId": {
       "type": "object",
-      "properties":{
+      "properties": {
         "type": {
           "type": "string"
         },
@@ -350,7 +352,7 @@
         }
       ]
     },
-    "AcademicSessionResponse" : {
+    "AcademicSessionResponse": {
       "type": "object",
       "properties": {
         "academicSession": {
@@ -358,7 +360,7 @@
         }
       }
     },
-    "AcademicSessionsResponse" : {
+    "AcademicSessionsResponse": {
       "type": "object",
       "properties": {
         "academicSessions": {
@@ -369,7 +371,7 @@
         }
       }
     },
-    "OrgResponse" : {
+    "OrgResponse": {
       "type": "object",
       "properties": {
         "org": {
@@ -377,7 +379,7 @@
         }
       }
     },
-    "OrgsResponse" : {
+    "OrgsResponse": {
       "type": "object",
       "properties": {
         "orgs": {
@@ -388,7 +390,7 @@
         }
       }
     },
-    "EnrollmentResponse" : {
+    "EnrollmentResponse": {
       "type": "object",
       "properties": {
         "enrollment": {
@@ -396,7 +398,7 @@
         }
       }
     },
-    "EnrollmentsResponse" : {
+    "EnrollmentsResponse": {
       "type": "object",
       "properties": {
         "enrollments": {
@@ -407,7 +409,7 @@
         }
       }
     },
-    "CourseResponse" : {
+    "CourseResponse": {
       "type": "object",
       "properties": {
         "course": {
@@ -415,7 +417,7 @@
         }
       }
     },
-    "CoursesResponse" : {
+    "CoursesResponse": {
       "type": "object",
       "properties": {
         "courses": {
@@ -426,7 +428,7 @@
         }
       }
     },
-    "ClassResponse" : {
+    "ClassResponse": {
       "type": "object",
       "properties": {
         "class": {
@@ -434,7 +436,7 @@
         }
       }
     },
-    "ClassesResponse" : {
+    "ClassesResponse": {
       "type": "object",
       "properties": {
         "classes": {
@@ -445,7 +447,7 @@
         }
       }
     },
-    "UserResponse" : {
+    "UserResponse": {
       "type": "object",
       "properties": {
         "user": {
@@ -453,7 +455,7 @@
         }
       }
     },
-    "UsersResponse" : {
+    "UsersResponse": {
       "type": "object",
       "properties": {
         "users": {

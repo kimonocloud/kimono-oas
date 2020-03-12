@@ -10,7 +10,7 @@
   "schemes": [
     "https"
   ],
-  "securityDefinitions": { 
+  "securityDefinitions": {
     "Actor": {
       "type": "oauth2",
       "flow": "application",
@@ -18,14 +18,18 @@
     }
   },
   "security": [
-    { "Actor": [ ] }
+    {
+      "Actor": [
+
+      ]
+    }
   ],
   "consumes": [
     "application/json"
   ],
   "produces": [
     "application/json"
-  ],  
+  ],
   "definitions": {
     "BaseResourceType": {
       "type": "object",
@@ -92,7 +96,7 @@
           "$ref": "#/definitions/ErrorType"
         }
       }
-    },    
+    },
     "SIFClient": {
       "type": "object",
       "properties": {
@@ -120,7 +124,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "SIFClientResponse": {
       "allOf": [
         {
@@ -163,7 +167,7 @@
           "$ref": "#/definitions/PagedDataResponseType"
         }
       ]
-    },   
+    },
     "SIFZoneResponse": {
       "allOf": [
         {
@@ -260,7 +264,7 @@
             "schema": {
               "$ref": "#/definitions/ErrorType"
             }
-          }          
+          }
         }
       }
     },
@@ -281,7 +285,7 @@
             "type": "string",
             "format": "uuid"
           }
-        ],        
+        ],
         "produces": [
           "application/json"
         ],
@@ -356,7 +360,7 @@
             "schema": {
               "$ref": "#/definitions/ErrorType"
             }
-          }          
+          }
         }
       }
     },
@@ -377,7 +381,7 @@
             "type": "string",
             "format": "uuid"
           }
-        ],        
+        ],
         "produces": [
           "application/json"
         ],
