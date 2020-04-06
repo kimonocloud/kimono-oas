@@ -83,43 +83,54 @@
         }
       }
     },
+    "GradesRefTypeSys": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "source_id": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "app_id": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
     "GradesRefType": {
       "type": "object",
       "properties": {
         "$sys": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "source_id": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            },
-            "app_id": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            },
-            "created_at": {
-              "type": "string",
-              "format": "date-time",
-              "readOnly": true
-            },
-            "updated_at": {
-              "type": "string",
-              "format": "date-time",
-              "readOnly": true
-            }
-          }
+          "$ref": "#/definitions/GradesRefTypeSys"
         }
-      },
-      "example": {
-        "id": "guid"
+      }
+    },
+    "GradesCategoryRefType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "$sys": {
+          "$ref": "#/definitions/GradesRefTypeSys"
+        }
       }
     },
     "SingleObjectResponseType": {
@@ -335,7 +346,7 @@
           "$ref": "#/definitions/GradesRefType"
         },
         "$category": {
-          "$ref": "#/definitions/GradesRefType"
+          "$ref": "#/definitions/GradesCategoryRefType"
         },
         "$term": {
           "$ref": "#/definitions/GradesRefType"
