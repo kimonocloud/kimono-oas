@@ -15,6 +15,9 @@
       "type": "oauth2",
       "flow": "application",
       "tokenUrl": "https://api.us2.kimonocloud.com/oauth/token"
+    },
+    "Vendor": {
+      "type": "basic"
     }
   },
   "security": [
